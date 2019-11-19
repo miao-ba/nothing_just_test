@@ -131,8 +131,12 @@
       <pre><code># ls -al /etc/hosts
       -rw-r--r--. 1 root root 325  7月 23 06:21 /etc/hosts</code></pre>
     + 各組權限說明圖
+<<<<<<< HEAD
   
       ![各組權限說明圖](img/1.jpg "各組權限說明圖")
+=======
+      + ![各組權限說明圖](img/1.jpg "各組權限說明圖")
+>>>>>>> 1accc41ab5f7962b7671da4dff010c79e10f0690
       + 權限每三個一組
       + 每組各有 r、w、x 等三個權限可設定
       + 每一組權限針對不同的角色做限定
@@ -180,6 +184,7 @@
       #ls -al /tmp/test
       </code></pre>
 
+<<<<<<< HEAD
   + 檔案與目錄的權限說明
     + 檔案與目錄權限設定代表意函不相同
     + 檔案與目錄權限設定說明如下列表：
@@ -200,6 +205,8 @@
     |SETGID|s|執行該檔案時，暫時切換成該群組成員身份|在該目錄下新增任何檔案與子目錄時，群組均設成該群組名稱|
     |STICKBIT|t|(無作用)|在該目錄底下新增任檔案與子目錄，只有建立者才可以刪除|
 
+=======
+>>>>>>> 1accc41ab5f7962b7671da4dff010c79e10f0690
 #### 軟體安裝與管理
 + Linux 軟體安裝概念
   + TarBall: 
@@ -236,7 +243,11 @@
       + list: 列出所有軟體
       + search : 查詢
       + reinstall: 重裝
+<<<<<<< HEAD
       + versionlock: 鎖住版本不更新
+=======
+      + versionlocak: 鎖住版本不更新
+>>>>>>> 1accc41ab5f7962b7671da4dff010c79e10f0690
     + 例：
       <pre><code>#yum install epel-release
       #yum install git</code></pre> 
@@ -250,6 +261,7 @@
   + 利用瀏覽器查看一下站台預設網頁是否開啟
 + PHP 套件安裝與啟用
   + 使用 YUM 進行安裝
+<<<<<<< HEAD
     <pre><code>#yum install php php-fpm php-mcrypt php-json php-gd php-mbstring</code></pre>
   + 檢查 php-fpm 設定檔內容，通常是 www.conf :
     ```md
@@ -298,6 +310,12 @@
     <pre><code>#systemctl restart nginx</code></pre>
   + 佈署網頁至 nginx 網站
     <pre><code>#cd /usr/share/nginx/html
+=======
+    <pre><code>#yum install php php-fpm php-mcrypt php-json php-gd php-mbstring
+    #systemctl enable --now php-fpm
+    #systemctl restart nginx
+    #cd /usr/share/nginx/html
+>>>>>>> 1accc41ab5f7962b7671da4dff010c79e10f0690
     #git clone http://xxxxx/xxx.git (取得您的project內容)
     #restorecon -Rvv /usr/share/nginx/html</code></pre>
   + 利用瀏覽器查看一下站台網頁
