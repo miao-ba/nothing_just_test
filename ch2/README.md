@@ -131,12 +131,8 @@
       <pre><code># ls -al /etc/hosts
       -rw-r--r--. 1 root root 325  7月 23 06:21 /etc/hosts</code></pre>
     + 各組權限說明圖
-<<<<<<< HEAD
   
       ![各組權限說明圖](img/1.jpg "各組權限說明圖")
-=======
-      + ![各組權限說明圖](img/1.jpg "各組權限說明圖")
->>>>>>> 1accc41ab5f7962b7671da4dff010c79e10f0690
       + 權限每三個一組
       + 每組各有 r、w、x 等三個權限可設定
       + 每一組權限針對不同的角色做限定
@@ -184,7 +180,6 @@
       #ls -al /tmp/test
       </code></pre>
 
-<<<<<<< HEAD
   + 檔案與目錄的權限說明
     + 檔案與目錄權限設定代表意函不相同
     + 檔案與目錄權限設定說明如下列表：
@@ -205,8 +200,6 @@
     |SETGID|s|執行該檔案時，暫時切換成該群組成員身份|在該目錄下新增任何檔案與子目錄時，群組均設成該群組名稱|
     |STICKBIT|t|(無作用)|在該目錄底下新增任檔案與子目錄，只有建立者才可以刪除|
 
-=======
->>>>>>> 1accc41ab5f7962b7671da4dff010c79e10f0690
 #### 軟體安裝與管理
 + Linux 軟體安裝概念
   + TarBall: 
@@ -243,11 +236,7 @@
       + list: 列出所有軟體
       + search : 查詢
       + reinstall: 重裝
-<<<<<<< HEAD
       + versionlock: 鎖住版本不更新
-=======
-      + versionlocak: 鎖住版本不更新
->>>>>>> 1accc41ab5f7962b7671da4dff010c79e10f0690
     + 例：
       <pre><code>#yum install epel-release
       #yum install git</code></pre> 
@@ -257,31 +246,61 @@
   + 使用 YUM 進行安裝
     <pre><code>#yum install nginx
     #systemctl enable --now nginx
-    #firewall-cmd --add-service=http</code></pre>
+    #firewall-cmd --add-service=http
+    #firewall-cmd --runtime-to-permanent</code></pre>
   + 利用瀏覽器查看一下站台預設網頁是否開啟
 + PHP 套件安裝與啟用
   + 使用 YUM 進行安裝
-<<<<<<< HEAD
-    <pre><code>#yum install php php-fpm php-mcrypt php-json php-gd php-mbstring</code></pre>
+    <pre><code>#yum install php php-fpm php-json php-gd php-mbstring</code></pre>
   + 檢查 php-fpm 設定檔內容，通常是 www.conf :
     ```md
     (只需修改需要的部份，其他的設定項目保留原狀)
-    #vim /etc/opt/php73/php-fpm.d/www.conf
+    #nano /etc/php-fpm.d/www.conf
       user = nginx
       group = nginx
-      listen = /var/opt/remi/php73/run/php-fpm/php-fpm.sock
+      listen = /run/php-fpm/www.sock
       listen.acl_users = nginx
       slowlog = /var/log/php-fpm/www-slow.log
       php_admin_value[error_log] = /var/log/php-fpm/www-error.log
       php_admin_flag[log_errors] = on
     ```
   + 啟動 php-fpm 套件
-    <pre><code>#mkdir /var/log/php-fpm
+    <pre><code>#mkdir /var/lib/php/session
+    #chown nginx /var/lib/php/session
+    #mkdir /var/lib/php/wsdlcache
+    #chown nginx /var/lib/php/wsdlcache
+    #mkdir /var/log/php-fpm
     #systemctl enable --now php-fpm</code></pre>
-  + 修改 nginx 內的設定，將 /etc/nginx/nginx.conf 的 Server 區段註解
+  + 修改 nginx 內的設定，將 /etc/nginx/nginx.conf 的 Server 區段註解 :
+    ```md
+    #nano /etc/nginx/nginx.conf
+    (以下為該檔案的片段...)
+      #  server {
+      #  listen       80 default_server;
+      #  listen       [::]:80 default_server;
+      #  server_name  _;
+      #  root         /usr/share/nginx/html;
+
+        # Load configuration files for the default server block.
+        #以下這行保留下來，不要註解
+        include /etc/nginx/default.d/*.conf;
+
+      #  location / {
+      #  }
+
+      #  error_page 404 /404.html;
+      #      location = /40x.html {
+      #  }
+
+      #  error_page 500 502 503 504 /50x.html;
+      #      location = /50x.html {
+      #  }
+      # }
+    ```
+
   + 新增 /etc/nginx/conf.d/default.conf 內容如下：
     ```md
-    #vim /etc/nginx/conf.d/default.conf
+    #nano /etc/nginx/conf.d/default.conf
     server {
       listen       80 default_server;
       listen       [::]:80 default_server;
@@ -293,7 +312,7 @@
       location ~ \.php$ {
         root           /usr/share/nginx/html;
         try_files $uri = 404;
-        fastcgi_pass unix:/var/opt/remi/php73/run/php-fpm/php-fpm.sock;
+        fastcgi_pass unix:/run/php-fpm/www.sock;
         fastcgi_index  index.php;
         fastcgi_param  SCRIPT_FILENAME  $document_root$fastcgi_script_name;
         include        /etc/nginx/fastcgi_params;
@@ -307,17 +326,19 @@
     }
     ```
   + 重新啟動 nginx 
-    <pre><code>#systemctl restart nginx</code></pre>
+    <pre><code>#mv /etc/nginx/conf.d/php-fpm.conf /root
+    #mv /etc/nginx/default.d/php.conf /root
+    #nginx -t
+    #nginx -s reload</code></pre>
   + 佈署網頁至 nginx 網站
-    <pre><code>#cd /usr/share/nginx/html
-=======
-    <pre><code>#yum install php php-fpm php-mcrypt php-json php-gd php-mbstring
-    #systemctl enable --now php-fpm
-    #systemctl restart nginx
+    ```php
     #cd /usr/share/nginx/html
->>>>>>> 1accc41ab5f7962b7671da4dff010c79e10f0690
-    #git clone http://xxxxx/xxx.git (取得您的project內容)
-    #restorecon -Rvv /usr/share/nginx/html</code></pre>
+    #nano index.php
+    (輸入下列程式碼)
+      <?php
+        phpinfo();
+      ?>
+    #restorecon -Rvv /usr/share/nginx/html
   + 利用瀏覽器查看一下站台網頁
 
 #### 基本安全設定

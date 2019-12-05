@@ -291,7 +291,6 @@
 </li>
 <li>權限與使用者群組的相依性：
 <ul>
-<<<<<<< HEAD
 <li>
 <p>查詢指令範例：</p>
 <pre><code># ls -al /etc/hosts
@@ -301,14 +300,6 @@
 <p>各組權限說明圖</p>
 <p><img src="img/1.jpg" alt="各組權限說明圖" title="各組權限說明圖"></p>
 <ul>
-=======
-<li>查詢指令範例：<pre><code># ls -al /etc/hosts
--rw-r--r--. 1 root root 325  7月 23 06:21 /etc/hosts</code></pre>
-</li>
-<li>各組權限說明圖
-<ul>
-<li><img src="img/1.jpg" alt="各組權限說明圖" title="各組權限說明圖"></li>
->>>>>>> 1accc41ab5f7962b7671da4dff010c79e10f0690
 <li>權限每三個一組</li>
 <li>每組各有 r、w、x 等三個權限可設定</li>
 <li>每一組權限針對不同的角色做限定</li>
@@ -408,7 +399,6 @@
 </li>
 </ul>
 </li>
-<<<<<<< HEAD
 <li>
 <p>檔案與目錄的權限說明</p>
 <ul>
@@ -479,8 +469,6 @@
 </tbody>
 </table>
 </li>
-=======
->>>>>>> 1accc41ab5f7962b7671da4dff010c79e10f0690
 </ul>
 </li>
 </ul>
@@ -539,11 +527,7 @@
 <li>list: 列出所有軟體</li>
 <li>search : 查詢</li>
 <li>reinstall: 重裝</li>
-<<<<<<< HEAD
 <li>versionlock: 鎖住版本不更新</li>
-=======
-<li>versionlocak: 鎖住版本不更新</li>
->>>>>>> 1accc41ab5f7962b7671da4dff010c79e10f0690
 </ul>
 </li>
 <li>例：<pre><code>#yum install epel-release
@@ -561,7 +545,8 @@
 <ul>
 <li>使用 YUM 進行安裝<pre><code>#yum install nginx
 #systemctl enable --now nginx
-#firewall-cmd --add-service=http</code></pre>
+#firewall-cmd --add-service=http
+#firewall-cmd --runtime-to-permanent</code></pre>
 </li>
 <li>利用瀏覽器查看一下站台預設網頁是否開啟</li>
 </ul>
@@ -569,14 +554,104 @@
 <li>
 <p>PHP 套件安裝與啟用</p>
 <ul>
-<li>使用 YUM 進行安裝<pre><code>#yum install php php-fpm php-mcrypt php-json php-gd php-mbstring
-#systemctl enable --now php-fpm
-#systemctl restart nginx
-#cd /usr/share/nginx/html
-#git clone http://xxxxx/xxx.git (取得您的project內容)
-#restorecon -Rvv /usr/share/nginx/html</code></pre>
+<li>
+<p>使用 YUM 進行安裝</p>
+<pre><code>#yum install php php-fpm php-json php-gd php-mbstring</code></pre>
 </li>
-<li>利用瀏覽器查看一下站台網頁</li>
+<li>
+<p>檢查 php-fpm 設定檔內容，通常是 www.conf :</p>
+<pre><code class="language-md">(只需修改需要的部份，其他的設定項目保留原狀)
+<span class="hljs-header">#nano /etc/php-fpm.d/www.conf</span>
+  user = nginx
+  group = nginx
+  listen = /run/php-fpm/www.sock
+  listen.acl_users = nginx
+  slowlog = /var/log/php-fpm/www-slow.log
+  php<span class="hljs-emphasis">_admin_</span>value[error_log] = /var/log/php-fpm/www-error.log
+  php<span class="hljs-emphasis">_admin_</span>flag[log_errors] = on</code></pre>
+</li>
+<li>
+<p>啟動 php-fpm 套件</p>
+<pre><code>#mkdir /var/lib/php/session
+#chown nginx /var/lib/php/session
+#mkdir /var/lib/php/wsdlcache
+#chown nginx /var/lib/php/wsdlcache
+#mkdir /var/log/php-fpm
+#systemctl enable --now php-fpm</code></pre>
+</li>
+<li>
+<p>修改 nginx 內的設定，將 /etc/nginx/nginx.conf 的 Server 區段註解 :</p>
+<pre><code class="language-md"><span class="hljs-header">#nano /etc/nginx/nginx.conf</span>
+(以下為該檔案的片段...)
+  #  server {
+  #  listen       80 default_server;
+  #  listen       [::]:80 default_server;
+  #  server<span class="hljs-emphasis">_name  _</span>;
+  #  root         /usr/share/nginx/html;
+
+<span class="hljs-code">    # Load configuration files for the default server block.</span>
+<span class="hljs-code">    #以下這行保留下來，不要註解</span>
+<span class="hljs-code">    include /etc/nginx/default.d/*.conf;</span>
+
+  #  location / {
+  #  }
+
+  #  error_page 404 /404.html;
+  #      location = /40x.html {
+  #  }
+
+  #  error_page 500 502 503 504 /50x.html;
+  #      location = /50x.html {
+  #  }
+  # }</code></pre>
+</li>
+<li>
+<p>新增 /etc/nginx/conf.d/default.conf 內容如下：</p>
+<pre><code class="language-md"><span class="hljs-header">#nano /etc/nginx/conf.d/default.conf</span>
+server {
+  listen       80 default_server;
+  listen       [::]:80 default_server;
+  server<span class="hljs-emphasis">_name  _</span>;
+  root         /usr/share/nginx/html;
+  location / {
+<span class="hljs-code">    index index.php index.html;</span>
+  }
+  location ~ \.php$ {
+<span class="hljs-code">    root           /usr/share/nginx/html;</span>
+<span class="hljs-code">    try_files $uri = 404;</span>
+<span class="hljs-code">    fastcgi_pass unix:/run/php-fpm/www.sock;</span>
+<span class="hljs-code">    fastcgi_index  index.php;</span>
+<span class="hljs-code">    fastcgi_param  SCRIPT_FILENAME  $document_root$fastcgi_script_name;</span>
+<span class="hljs-code">    include        /etc/nginx/fastcgi_params;</span>
+  }
+  error_page 404 /404.html;
+<span class="hljs-code">      location = /40x.html {</span>
+  }
+  error_page 500 502 503 504 /50x.html;
+<span class="hljs-code">      location = /50x.html {</span>
+  }
+}</code></pre>
+</li>
+<li>
+<p>重新啟動 nginx</p>
+<pre><code>#mv /etc/nginx/conf.d/php-fpm.conf /root
+#mv /etc/nginx/default.d/php.conf /root
+#nginx -t
+#nginx -s reload</code></pre>
+</li>
+<li>
+<p>佈署網頁至 nginx 網站</p>
+<pre><code class="language-php"><span class="hljs-comment">#cd /usr/share/nginx/html</span>
+<span class="hljs-comment">#nano index.php</span>
+(輸入下列程式碼)
+  <span class="hljs-preprocessor">&lt;?php</span>
+    phpinfo();
+  <span class="hljs-preprocessor">?&gt;</span>
+<span class="hljs-comment">#restorecon -Rvv /usr/share/nginx/html</span></code></pre>
+</li>
+<li>
+<p>利用瀏覽器查看一下站台網頁</p>
+</li>
 </ul>
 </li>
 </ul>
@@ -632,11 +707,7 @@
 <ul>
 <li><a href="http://linux.vbird.org/">鳥哥的私房菜</a></li>
 </ul>
-<<<<<<< HEAD
-</div></div></div><p style="text-align: center;" class="text-muted">Generated by&nbsp;<a href="https://github.com/danielgtaylor/aglio" class="aglio">aglio</a>&nbsp;on 18 Nov 2019</p><script>/* eslint-env browser */
-=======
-</div></div></div><p style="text-align: center;" class="text-muted">Generated by&nbsp;<a href="https://github.com/danielgtaylor/aglio" class="aglio">aglio</a>&nbsp;on 12 Nov 2019</p><script>/* eslint-env browser */
->>>>>>> 1accc41ab5f7962b7671da4dff010c79e10f0690
+</div></div></div><p style="text-align: center;" class="text-muted">Generated by&nbsp;<a href="https://github.com/danielgtaylor/aglio" class="aglio">aglio</a>&nbsp;on 26 Nov 2019</p><script>/* eslint-env browser */
 /* eslint quotes: [2, "single"] */
 'use strict';
 
