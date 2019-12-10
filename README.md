@@ -139,17 +139,41 @@
 + break 與 continue
 #### 參考文獻
 
-### 第七章 PHP 進階語法 [內容](ch7/README.md)
+### 第七章 PHP 進階語法 I [內容](ch7/README.md)
 #### 函數
 + 函數的作用
 + 使用方式
 + 可變長度引數
-+ 
++ 遞迴函數
++ 參數與回傳值宣告
 #### 物件導向
-#### 例外處理
++ 物件導向的目的
++ 類別與物件 (Class & Object)
++ 封裝 (Encapsulation)
++ 建構子(constructor)與解建構子(destructor)
++ 繼承(extends)
++ 覆寫(override)
++ 介面(interface)
++ 抽象類別 (Abstract)
++ 靜態屬性(static)
++ 多型(Polymorphism)
++ 多載(overloading)
++ 匿名類別
 #### 參考文獻
 
-### 第八章 套件、框架、Composer [內容](ch8/README.md)
+### 第八章 PHP 進階語法II [內容](ch8/README.md)
+#### 類別的應用與處理
++ 自動載入
++ 命名空間(Namespace)
++ 特徵(Trait)
+#### 例外處理
++ 例外的情況分類
++ try...catch 敘述
++ 抛出例外與接收
++ Exception 類別的繼承
+#### 參考文獻
+
+### 第九章 套件、框架、Composer [內容](ch9/README.md)
 #### 參考文獻
 
 #### 參考書籍
